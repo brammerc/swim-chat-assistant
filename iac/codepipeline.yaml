@@ -1,0 +1,32 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: VPC-only CodePipeline for ECS Fargate app
+
+Parameters:
+  GitHubOwner:
+    Type: String
+  GitHubRepo:
+    Type: String
+  GitHubBranch:
+    Type: String
+    Default: main
+  GitHubOAuthToken:
+    Type: String
+    NoEcho: true
+
+Resources:
+  CodeBuildSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: CodeBuild security group
+      VpcId: !ImportValue FargateApp-VPCId
+
+  CodeBuildProject:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      VpcConfig:
+        VpcId: !ImportValue FargateApp-VPCId
+        Subnets:
+          - !ImportValue FargateApp-PrivateSubnetA
+          - !ImportValue FargateApp-PrivateSubnetB
+        SecurityGroupIds:
+          - !Ref CodeBuildSG

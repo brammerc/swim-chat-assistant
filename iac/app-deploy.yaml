@@ -1,0 +1,11 @@
+Resources:
+  ECSService:
+    Type: AWS::ECS::Service
+    Properties:
+      LaunchType: FARGATE
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets:
+            - !ImportValue FargateApp-PrivateSubnetA
+            - !ImportValue FargateApp-PrivateSubnetB
+          AssignPublicIp: DISABLED
